@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDOList</title>
+</head>
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    h1{
+        padding: 20px;
+        text-align: center;
+    }
+
+    .input-add{
+       display: flex;
+       justify-content: center;
+    }
+
+    .text-input{
+        margin: 30px auto;
+        display: flex;
+        justify-content: center;
+    }
+
+    .btn{
+        width: 8vw;
+        height: 5vh;
+        background-color: blue;
+        font-size: 20px;
+    }
+
+    table,thead,td,tr,th,tbody{
+        width: 28vw;
+        margin-top: 30px;
+        border-collapse:collapse;
+        padding: 15px;
+        border: 1px solid black;
+    }
+
+    #input{
+        width: 20vw;
+        height: 5vh;
+        font-size: 20px;
+    }
+
+    li{
+        list-style: none;
+        font-size: 22px;
+        background-color: lightgrey;
+        font-weight: 900;
+        border-radius: 5px;
+        padding: 20px;
+        margin: 10px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .deletetask{
+        background-color: black;
+        color: white;
+        border-radius: 5px;
+        padding: 5px 10px;
+        
+    }
+
+    .edittask{
+        background-color: black;
+        color: white;
+        border-radius: 5px;
+        padding: 5px 10px;
+        margin-left:    250px;
+    }
+</style>
+<body>
+    
+    <div class="text-input">
+        <div class="main-input">
+            <h1><u> TO DO LIST.</u></h1>
+            <div class="input-add">
+                <input id="input" type="text">
+                <button onclick="taskAdd()" class="btn" id="btn">Add</button>
+            </div>
+            <br>
+            <!-- <input  type="text">
+            <button onclick="edit()">edit</button> -->
+         <ul id="ul">
+
+         </ul>
+        </div>
+    </div>
+</body>
+
+<script>
+
+index = 0
+
+let clickBtnAdd = document.getElementById('btn') 
+let inputTask = document.getElementById('input')
+let outPutTable = document.getElementById('ul')
+
+
+keepTask();
+
+function taskAdd(){
+    const task = inputTask.value.trim()
+    if(task){
+        taskElement(task) 
+        inputTask.value = ''
+
+        saveTask()
+    }else{
+        alert('Your input box must be vaild.'); 
+    }
+    index++
+}
+
+
+function taskElement(task){
+    let li = document.createElement('li')
+    li.textContent = task
+    li.setAttribute('readonly', 'readonly')
+    
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.className = 'deletetask'
+
+    const editBtn = document.createElement('button')
+    editBtn.textContent = 'Edit'
+    editBtn.className = 'edittask'
+
+    li.appendChild(editBtn)
+    li.appendChild(deleteBtn)
+    outPutTable.appendChild(li)
+
+    
+    deleteBtn.addEventListener('click', function(){
+            outPutTable.removeChild(li);
+            saveTask()
+    });
+
+
+    editBtn.addEventListener('click', () =>{
+        if(editBtn.innerText === 'Edit'){
+            editBtn.innerText = 'Save'
+            li.removeAttribute('readonly')
+            li.focus()
+        }else {
+				editBtn.innerText = "Edit";
+				li.setAttribute("readonly", "readonly");
+			}
+    })
+
+
+
+    
+    
+}
+
+
+function saveTask(){
+    let tasks = []
+    outPutTable.querySelectorAll('li').forEach( (item) =>{
+        tasks.push(item.innerHTML.replace('<button class="deletetask">Delete</button>', '').trim())
+        keepTask()
+    });
+
+
+    localStorage.setItem('tasks', JSON.stringify(tasks))
+}
+
+
+function keepTask(){
+
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || []
+
+    tasks.forEach(taskElement);
+}
+
+
+// clickBtnAdd.addEventListener('click', taskAdd)
+
+</script>
+</html>
